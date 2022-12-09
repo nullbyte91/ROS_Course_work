@@ -936,6 +936,78 @@ $ rostopic list
 /tf
 
 ```
+## RVIZ
+RViz is our one-stop shop for visualising a robot's three core aspects: perception, decision-making, and actuation.
+
+RViz, unlike Gazebo, can visualise any type of sensor data published over a ROS topic, including camera images, point clouds, ultrasonic measurements, lidar data, inertial measurements, and more. This data can be a live stream directly from the sensor, or it can be pre-recorded data saved as a bagfile.
+
+You can also view live joint angle values from a robot and thus create a real-time 3D representation of any robot. However, RViz is not a simulator and does not communicate with a physics engine. RViz thus does not model collisions or dynamics. RViz is not a replacement for Gazebo, but rather a complementary tool for monitoring every single process running beneath the hood of a robotic system.
+
+## Running RViz
+```bash
+roscore
+rosrun rviz rviz
+```
+
+![rviz](./docs/rviz-anonotated.png "rviz")
+
+The empty window in the center is called 3D view. This is where you will spend most of your time observing the robot model, the sensors, and other meta-data.
+
+The panel on the left is a list of loaded displays, while the one on the right shows different views available.
+
+At the top we have a number of useful tools. The bottom bar displays information like time elapsed, frames per second, and some handy instructions for the selected tool.
+
+### RVIZ Integration
+Update the below content in <b> robot_description.launch</b>,
+```xml
+  <!-- Send fake joint values-->
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+    <param name="use_gui" value="false"/>
+  </node>
+
+  <!-- Send robot states to tf -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen"/>
+```
+Those elements add two nodes - the <b>joint_state_publisher</b> and the </b>robot_state_publisher</b>.
+<b>joint_state_publisher:</b> Publishes joint state messages for the robot, such as the angles for the non-fixed joints.
+<b>robot_state_publisher:</b> Publishes the robot's state to tf (transform tree). Your robot model has several frames corresponding to each link/joint. The robot_state_publisher publishes the 3D poses of all of these links. This offers a convenient and efficient advantage, especially for more complicated robots.
+
+Modify the Launch file to launch RVIZ, world.launch
+```xml
+<!--launch rviz-->
+<node name="rviz" pkg="rviz" type="rviz" respawn="false"/>
+```
+```
+roslaunch my_robot world.launch
+```
+
+Setup RViz to visualize the sensor readings. On the left side of RViz, under Displays:
+
+Select odom for fixed frame
+Click the Add button and
+add RobotModel and your robot model should load up in RViz.
+add Camera and select the Image topic that was defined in the camera Gazebo plugin
+add LaserScan and select the topic that was defined in the Hokuyo Gazebo plugin
+
+#### Gazebo View
+![rviz](./docs/Gazebo_with_ROS_Plugin.png "rviz")
+
+### RVIZ View
+![rviz](./docs/Rviz_1.png "rviz")
+
+#### Test Robot's actuators and Drive
+```bash
+cd ~/mobile_robot_ws/
+source devel/setup.bash
+rostopic pub /cmd_vel geometry_msgs/Twist  "linear:
+  x: 0.1
+  y: 0.0
+  z: 0.0
+angular:
+  x: 0.0
+  y: 0.0
+  z: 0.1" 
+```
 ## Create Robot Model
 ```bash
 catkin_create_pkg my_mira_description rospy rviz controller_manager gazebo_ros joint_state_publisher robot_state_publisher
@@ -945,6 +1017,7 @@ In the Robot Operating System (ROS), the convention for naming robot description
 
 What is control manager?
 The control manager is a module that is responsible for coordinating the various controllers and control algorithms that are used to control a robot. This can include things like joint controllers for moving the robot's joints, as well as higher-level controllers for executing specific tasks or behaviors. The control manager is typically used to manage the flow of information between the different controllers, as well as to provide an interface for external programs or users to interact with the robot's control system. This allows different controllers to be easily added, removed, or modified, without having to make changes to the underlying control algorithms or hardware.
+
 ![Control Manager](docs/Control_Manager.png "Control Manger")
 
 
