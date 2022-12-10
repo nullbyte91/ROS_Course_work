@@ -1387,6 +1387,49 @@ $ rosservice call /ball_chaser/command_robot "0.0 -0.5"  # This request should d
 $ rosservice call /ball_chaser/command_robot "0.0 0.0"  # This request should bring your robot to a complete stop
 ```
 
+## Lets model a White Ball
+```bash
+gazebo
+```
+### Insert Sphere
+Under the simple shapes menu of the Model Editor tool, click on a sphere and insert it anywhere in the scene.
+
+### Edit Size
+Double click on the sphere, and change its radius to 0.1 both in Visual and Collision.
+
+### Change Color
+To change the ball’s color to white, set its Visual Ambient, Diffuse, Specular, and Emissive RGBA values to 1.
+
+
+![human](docs/model-a-ball.png "human")
+
+### Save
+Save the white ball model as my_ball under the /home/workspace directory. Then exit the Model Editor tool and go back to the Gazebo main world.
+
+### Insert Ball
+Now that you are back in the Gazebo main world, you can click on “Insert” and drop the white ball anywhere in the scene.
+
+Now update the world file.
+
+## Image Process Node
+### Analyzing the Images
+To identify the ball’s presence and position inside the image, you will use a simple approach. First, search for white pixels inside the array image. Since the ball is the only object in the world that is white, white pixels indicate the ball’s presence. Then, once you find that the ball, identify its position with respect to the camera - either the left, middle, or right side of the image.
+
+![human](docs/image_step_1.png  "human")
+
+![human](docs/image_step_2.png  "human")
+
+```python
+if pixel_position = i % img.step
+
+if pixel_position <  img.step * 0.4:
+  #Left
+elif pixel_position >  img.step * 0.6:
+  # Right
+else 
+  # Forward 
+```
+
 In the Robot Operating System (ROS), the convention for naming robot description packages is to use the robot's name followed by _description. For example, if the robot's name is "mobile_robot", the description package would be named "mobile_robot_description". This naming convention helps to clearly identify the purpose of the package, and also helps to prevent naming conflicts with other packages. Additionally, many tools and scripts in ROS expect description packages to follow this naming convention, so using it can make it easier to use these tools with your robot's description. Overall, following the robotname_description convention can help to make your robot's description more organized and consistent with other ROS packages.
 
 What is control manager?
