@@ -2,6 +2,7 @@
 
 ## Software Setup
 ```bash
+sudo apt install ros-noetic-moveit-core ros-noetic-moveit-kinematics ros-noetic-effort-controllers
 mkdir -p ~/ur_ws/src/ && cd ~/ur_ws/src/ #Create a dir & move
 git clone https://github.com/ros-industrial/universal_robot.git && cd universal_robot && git checkout melodic-devel # Clone unversial robot 
 cd ../../
